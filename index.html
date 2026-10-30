@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caso Atresia de Esófago</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: una escena por pantalla, columna única, fondo claro con acentos flúor; la Rx queda oscura como un negatoscopio */
+:root{
+  --bg:#f6f4fb; --surface:#ffffff; --surface-2:#eee9f8; --line:#dcd2ee;
+  --fg:#1d1430; --muted:#5b4f70; --ink:#1d1430;
+  --fl-pink:#ff2e88; --fl-pink-text:#d1006a; --fl-orange:#ff6a1a; --fl-violet:#7b2bff;
+  --fl-lime:#d4ff1a; --fl-green:#00e07a; --fl-cyan:#00e5ff;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:19px;line-height:1.5;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line);
+  padding-block:10px 12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hrow{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.hrow b{color:var(--fg);font-weight:700}
+.hrow em{font-style:normal;background:var(--fl-lime);color:var(--ink);padding:0 5px;border-radius:4px;font-weight:700}
+.bar{display:flex;gap:5px;margin-top:9px}
+.bar span{flex:1;height:6px;border-radius:3px;background:var(--surface-2);transition:background .3s}
+.bar span.done{background:var(--fl-violet)}.bar span.now{background:var(--fl-pink)}
+main{max-width:640px;margin:0 auto;padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.scene{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fl-pink-text)}
+h1,h2{font-family:var(--display);font-weight:800;line-height:1.12;margin:0;text-wrap:balance}
+h1{font-size:2rem}h2{font-size:1.6rem}
+p{margin:0}
+.lead{color:var(--muted)}
+.vitals{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.vital{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.vital .v{font-family:var(--display);font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.vital .k{font-size:14px;color:var(--muted)}
+.story{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.story ul{margin:0;padding-left:20px}.story li{margin-block:4px}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;background:var(--surface);color:var(--fg);
+  border:2px solid var(--line);border-radius:14px;padding:14px 16px;font:inherit;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.opt:hover{border-color:var(--fl-violet);box-shadow:0 0 0 3px color-mix(in srgb,var(--fl-violet) 18%,transparent)}
+.opt:focus-visible,.btn:focus-visible{outline:3px solid var(--fl-pink);outline-offset:3px}
+.opt .l{flex:none;width:32px;height:32px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-family:var(--mono);font-size:14px;font-weight:700}
+.opt[disabled]{cursor:default;box-shadow:none}
+.opt.right{border-color:var(--fl-green);background:color-mix(in srgb,var(--fl-green) 12%,var(--surface))}
+.opt.right .l{background:var(--fl-green);color:var(--ink)}
+.opt.wrong{border-color:var(--fl-pink);background:color-mix(in srgb,var(--fl-pink) 10%,var(--surface))}
+.opt.wrong .l{background:var(--fl-pink);color:#fff}
+.opt.dim{opacity:.5}
+.fb{border-left:5px solid var(--fl-violet);background:var(--surface);border-radius:0 12px 12px 0;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fb.ok{border-color:var(--fl-green)}.fb.no{border-color:var(--fl-pink)}
+.fb .tag{align-self:flex-start;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:5px;color:var(--ink)}
+.fb.ok .tag{background:var(--fl-green)}.fb.no .tag{background:var(--fl-pink);color:#fff}.fb .tag.alt{background:var(--fl-cyan)}
+.btn{align-self:flex-start;background:var(--fl-orange);color:var(--ink);border:0;border-radius:12px;padding:13px 20px;font:700 1rem var(--body);cursor:pointer;
+  box-shadow:0 4px 0 color-mix(in srgb,var(--fl-orange) 55%,#000)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 color-mix(in srgb,var(--fl-orange) 55%,#000)}
+.btn.ghost{background:var(--surface);border:2px solid var(--line);box-shadow:none}
+.xray{background:#0b0910;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px;width:100%;max-width:360px;align-self:center;margin-inline:auto}
+.xray svg{width:100%;height:auto;display:block;max-width:100%}
+.xray small{color:#a99fb6;font-size:13px;font-family:var(--mono)}
+.xray .cap{color:#fff;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.xray .cap b{color:var(--fl-lime)}
+.key{background:var(--fl-lime);color:var(--ink);border-radius:14px;padding:16px 18px;font-weight:700;font-size:1.1rem}
+.key span{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.tbl{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:16px;min-width:480px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface-2)}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.hl td{background:color-mix(in srgb,var(--fl-lime) 35%,transparent)}
+.si,.no{display:inline-block;font-family:var(--mono);font-size:13px;font-weight:700;padding:1px 7px;border-radius:5px}
+.si{background:var(--fl-green);color:var(--ink)}.no{background:var(--fl-pink);color:#fff}
+.checklist{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+.checklist h3{font-family:var(--display);font-size:1.15rem;margin:0 0 6px}
+.checklist ul{margin:0;padding-left:20px}.checklist li{margin-block:4px}
+.path{display:flex;flex-direction:column;gap:10px;padding:0;margin:0;list-style:none}
+.path li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.path .mk{flex:none;font-family:var(--mono);font-size:13px;font-weight:700;padding:3px 8px;border-radius:6px}
+.mk.ok{background:var(--fl-green);color:var(--ink)}.mk.no{background:var(--fl-pink);color:#fff}
+.score{font-family:var(--display);font-weight:800;font-size:3.2rem;line-height:1;color:var(--fl-violet)}
+.note{font-size:15px;color:var(--muted)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+@media (prefers-reduced-motion:no-preference){.scene{animation:in .35s ease both}@keyframes in{from{transform:translateY(8px)}to{transform:none}}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow"><b>Atresia de esófago</b><span>Minuto <em>5</em> · <span id="step">1/9</span></span></div>
+  <div class="bar" id="bar"></div>
+</header>
+<main id="app"></main>
+
+<script>
+const S = { i:0 };
+
+const DEC = {
+  d1:{ label:"Primer paso ante la sospecha", ok:"a", order:['b','c','a'], opts:{
+    a:{t:"Pasar una sonda firme 10 Fr por boca y pedir Rx tóraco-abdominal con la sonda colocada.",
+       fb:"Si la sonda se frena a unos 10 cm de la encía, la sospecha queda confirmada.<br>La Rx con sonda muestra dónde termina el bolsillo y si hay aire abajo."},
+    b:{t:"Pedir un esofagograma con bario para ver el fondo de saco.",
+       fb:"El contraste puede pasar a la vía aérea y causar neumonitis química.<br>La sonda radiopaca más una Rx simple alcanzan para el diagnóstico."},
+    c:{t:"Reintentar la toma con menor volumen, semisentado y observando.",
+       fb:"Cada toma es una nueva aspiración: el bolsillo se llena y desborda.<br>Ante la sospecha: nada por boca, ya."}
+  }},
+  d2:{ label:"Medidas mientras llega la Rx", ok:"a", order:['b','a','c'], opts:{
+    a:{t:"Nada por boca, sonda Replogle en aspiración continua, cabecera elevada 30–45° y plan de hidratación IV.",
+       fb:"La Replogle (doble lumen) mantiene vacío el bolsillo sin taparse.<br>La cabecera alta reduce el reflujo gástrico hacia la tráquea por la fístula."},
+    b:{t:"Nada por boca, sonda simple abierta a bolsa y decúbito plano.",
+       fb:"Una sonda simple a bolsa se tapa y el bolsillo vuelve a llenarse.<br>En decúbito plano el jugo gástrico sube por la fístula al pulmón."},
+    c:{t:"Ventilar con bolsa y máscara de forma vigorosa para mejorar la saturación.",
+       fb:"Si hay fístula distal, el aire va al estómago: distensión y peor ventilación.<br>Si necesita soporte, intubación cuidadosa y presiones bajas."}
+  }},
+  d3:{ label:"Lectura de la Rx: con aire abajo", ok:"b", order:['b','a','c'], opts:{
+    a:{t:"Tipo A: atresia pura, sin fístula.",
+       fb:"Sin fístula distal el aire no tiene por dónde llegar al estómago.<br>En el tipo A el abdomen se ve sin gas, y acá hay cámara gástrica."},
+    b:{t:"Tipo C: atresia con fístula traqueoesofágica distal.",
+       fb:"Sonda enrollada arriba + aire en el abdomen = fístula distal.<br>Es la forma más frecuente, cerca del 85 % de los casos."},
+    c:{t:"Tipo E (en H): fístula sin atresia.",
+       fb:"En el tipo H el esófago es continuo y la sonda llega al estómago.<br>Suele consultar más tarde por tos con las tomas y neumonías."}
+  }},
+  d4:{ label:"Y si la Rx fuera sin aire abajo", ok:"b", order:['a','c','b'], opts:{
+    a:{t:"Tipo C: atresia con fístula distal.",
+       fb:"Con fístula distal el estómago se llena de aire con cada respiración.<br>Un abdomen sin gas descarta, en la práctica, una fístula distal."},
+    b:{t:"Tipo A o B: sin fístula distal; la Rx simple no los separa.",
+       fb:"Sonda frenada + abdomen sin gas = no hay fístula distal.<br>A y B se separan por broncoscopía; suelen tener cabos alejados (long gap)."},
+    c:{t:"Tipo D: doble fístula.",
+       fb:"El tipo D tiene fístula distal, así que el abdomen tendría aire.<br>Se ve igual que un C y se descubre en la broncoscopía."}
+  }},
+  d5:{ label:"Qué pedir además antes de operar", ok:"a", order:['c','a','b'], opts:{
+    a:{t:"Ecocardiograma, ecografía renal y Rx de columna y extremidades.",
+       fb:"Hasta la mitad tiene otra malformación: buscá la asociación VACTERL.<br>El eco además informa el lado del arco aórtico, que orienta el abordaje."},
+    b:{t:"Esofagograma con contraste para medir la distancia entre cabos.",
+       fb:"No es de rutina y suma riesgo de aspiración.<br>La distancia entre cabos se evalúa en el quirófano o con estudios dirigidos por cirugía."},
+    c:{t:"TAC de tórax y resonancia de rutina antes de la cirugía.",
+       fb:"No aportan para la decisión inicial y demoran el traslado.<br>Lo urgente: ecocardiograma y búsqueda dirigida de VACTERL."}
+  }}
+};
+const ORDER = ['d1','d2','d3','d4','d5'];
+const TOTAL = 9;
+
+const $ = h => { const d=document.createElement('div'); d.innerHTML=h; return d.firstElementChild; };
+const app = document.getElementById('app');
+
+function bar(){
+  const b=document.getElementById('bar'); b.innerHTML='';
+  for(let k=0;k<TOTAL;k++){const s=document.createElement('span'); if(k<S.i)s.className='done'; if(k===S.i)s.className='now'; b.appendChild(s);}
+  document.getElementById('step').textContent=(S.i+1)+'/'+TOTAL;
+}
+function go(i){ S.i=i; bar(); app.innerHTML=''; app.appendChild(views[i]()); window.scrollTo(0,0); }
+
+function xray(gas){
+  const abdomen = gas ? `
+    <ellipse cx="196" cy="196" rx="30" ry="15" fill="#120e16" stroke="#7a6d88" stroke-width="1"/>
+    <g fill="#120e16" stroke="#7a6d88" stroke-width="1">
+      <ellipse cx="120" cy="240" rx="16" ry="9"/><ellipse cx="155" cy="258" rx="14" ry="8"/>
+      <ellipse cx="190" cy="242" rx="15" ry="8"/><ellipse cx="220" cy="262" rx="13" ry="7"/><ellipse cx="102" cy="268" rx="12" ry="7"/>
+    </g>
+    <g font-family="JetBrains Mono, monospace" font-size="11" fill="#d4ff1a">
+      <text x="236" y="194">cámara</text><text x="236" y="207">gástrica</text><line x1="234" y1="198" x2="226" y2="196" stroke="#d4ff1a"/>
+      <text x="12" y="226">gas intestinal</text>
+    </g>` : `
+    <g font-family="JetBrains Mono, monospace" font-size="11" fill="#ff2e88">
+      <text x="96" y="236">abdomen sin gas</text>
+    </g>`;
+  return `<div class="xray">
+  <div class="cap">Rx tóraco-abdominal · <b>${gas?'con aire abajo':'sin aire abajo'}</b></div>
+  <svg viewBox="0 0 320 300" role="img" aria-label="Esquema de radiografía: sonda enrollada en el tórax superior, ${gas?'con':'sin'} aire en el abdomen">
+    <rect x="0" y="0" width="320" height="300" fill="#0b0910"/>
+    <path d="M70 40 Q60 20 160 18 Q260 20 250 40 L262 160 Q260 175 160 178 Q60 175 58 160 Z" fill="#2b2433"/>
+    <path d="M88 60 Q80 150 92 160 Q130 166 148 158 L148 60 Q120 44 88 60Z" fill="#141018"/>
+    <path d="M232 60 Q240 150 228 160 Q190 166 172 158 L172 60 Q200 44 232 60Z" fill="#141018"/>
+    <rect x="154" y="18" width="12" height="270" rx="4" fill="#4b4157"/>
+    <ellipse cx="200" cy="148" rx="34" ry="20" fill="#4b4157" opacity=".7"/>
+    <path d="M58 168 Q160 196 262 168 L268 290 L52 290 Z" fill="${gas?'#2b2433':'#3a3144'}"/>
+    ${abdomen}
+    <path d="M160 0 L160 40 C160 52 178 54 176 64 C174 76 146 74 146 62 C146 50 172 48 172 38" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <g font-family="JetBrains Mono, monospace" font-size="11" fill="#00e5ff">
+      <text x="190" y="40">sonda enrollada</text><text x="190" y="53">(T2–T3)</text>
+      <line x1="188" y1="44" x2="178" y2="56" stroke="#00e5ff"/>
+    </g>
+  </svg>
+  <small>Esquema didáctico, no es una imagen real.</small></div>`;
+}
+
+function decision(key,eyebrow,title,extra){
+  const D=DEC[key];
+  const w=$(`<section class="scene"><div class="eyebrow">${eyebrow}</div><h2>${title}</h2>${extra||''}<div class="opts"></div><div class="slot"></div></section>`);
+  const box=w.querySelector('.opts'), slot=w.querySelector('.slot');
+  const reveal=k=>{
+    box.querySelectorAll('.opt').forEach(x=>{x.disabled=true; const xk=x.dataset.k;
+      if(xk===D.ok) x.classList.add('right'); else if(xk===k) x.classList.add('wrong'); else x.classList.add('dim');});
+    const good=k===D.ok;
+    let h=`<div class="fb ${good?'ok':'no'}"><span class="tag">${good?'Bien visto':'Repensalo'}</span><p>${D.opts[k].fb}</p></div>`;
+    if(!good) h+=`<div class="fb" style="margin-top:12px"><span class="tag alt">La opción correcta</span><p>${D.opts[D.ok].fb}</p></div>`;
+    slot.innerHTML=h;
+    const n=document.createElement('button'); n.className='btn'; n.textContent='Seguir →'; n.style.marginTop='16px';
+    n.onclick=()=>go(S.i+1); slot.appendChild(n);
+  };
+  D.order.forEach((k,idx)=>{ const o=D.opts[k];
+    const b=document.createElement('button'); b.className='opt'; b.dataset.k=k; b.id=key+'-'+k;
+    b.innerHTML=`<span class="l">${'ABC'[idx]}</span><span>${o.t}</span>`;
+    b.onclick=()=>{ if(S[key]) return; S[key]=k; reveal(k); };
+    box.appendChild(b);
+  });
+  if(S[key]) reveal(S[key]);
+  return w;
+}
+
+const views = [
+  () => $(`<section class="scene">
+      <div class="eyebrow">Caso ramificado · sala de partos</div>
+      <h1>Recién nacido que no puede con su propia saliva</h1>
+      <div class="vitals">
+        <div class="vital"><div class="v">37 sem</div><div class="k">edad gestacional</div></div>
+        <div class="vital"><div class="v">2 hs</div><div class="k">de vida</div></div>
+        <div class="vital"><div class="v">2.650 g</div><div class="k">peso al nacer</div></div>
+        <div class="vital"><div class="v">↑ LA</div><div class="k">polihidramnios prenatal</div></div>
+      </div>
+      <div class="story"><ul>
+        <li>Sialorrea espumosa que reaparece apenas se aspira.</li>
+        <li>En la primera toma: tos, ahogo y cianosis.</li>
+        <li>Abdomen blando, sin distensión.</li>
+      </ul></div>
+      <p class="lead">Caso inventado para la clase, sin datos de pacientes reales. Vas a tomar cinco decisiones.</p>
+      <button class="btn" onclick="go(1)">Empezar →</button>
+    </section>`),
+
+  () => decision('d1','Decisión 1 de 5 · el primer paso','Sospechás atresia de esófago. ¿Qué hacés ahora?'),
+
+  () => decision('d2','Decisión 2 de 5 · estabilizar','La sonda se frenó a 10 cm. ¿Qué indicás mientras llega la Rx?'),
+
+  () => $(`<section class="scene">
+      <div class="eyebrow">Consecuencia</div>
+      <h2>Llega la Rx con la sonda puesta</h2>
+      <p>El bolsillo está aspirado y el bebé respira tranquilo con la cabecera elevada. Mirá la placa antes de decidir.</p>
+      ${xray(true)}
+      <button class="btn" onclick="go(4)">Interpretar la Rx →</button>
+    </section>`),
+
+  () => decision('d3','Decisión 3 de 5 · leer el estudio','Sonda enrollada arriba y aire en el abdomen. ¿Qué tipo es?', xray(true)),
+
+  () => decision('d4','Decisión 4 de 5 · ¿y si hubiera sido así?','Misma sonda frenada, pero el abdomen no tiene gas. ¿Qué tipo sería?', xray(false)),
+
+  () => decision('d5','Decisión 5 de 5 · antes del quirófano','Confirmaste atresia con fístula distal. ¿Qué solicitás además?'),
+
+  () => $(`<section class="scene">
+      <div class="eyebrow">Para llevarse</div>
+      <h2>Dos preguntas ordenan los cinco tipos</h2>
+      <div class="key"><span>El dato que no se olvida</span>¿Pasa la sonda? ¿Hay aire en el abdomen? Sonda frenada con aire abajo = fístula distal.</div>
+      <div class="tbl"><table>
+        <thead><tr><th>Tipo (Gross)</th><th>Frec.</th><th>¿Pasa la sonda?</th><th>¿Aire en abdomen?</th><th>Pista clínica</th></tr></thead>
+        <tbody>
+          <tr><td><b>A</b> · atresia pura</td><td class="n">~8 %</td><td><span class="no">No</span></td><td><span class="no">No</span></td><td>Abdomen excavado, sin gas; cabos muy separados</td></tr>
+          <tr><td><b>B</b> · fístula proximal</td><td class="n">~1 %</td><td><span class="no">No</span></td><td><span class="no">No</span></td><td>Como A, con aspiración marcada desde la primera toma</td></tr>
+          <tr class="hl"><td><b>C</b> · fístula distal</td><td class="n">~85 %</td><td><span class="no">No</span></td><td><span class="si">Sí</span></td><td>Sonda enrollada en T2–T4 y gas en estómago e intestino</td></tr>
+          <tr><td><b>D</b> · doble fístula</td><td class="n">~2 %</td><td><span class="no">No</span></td><td><span class="si">Sí</span></td><td>Se ve como C; la fístula proximal aparece en la broncoscopía</td></tr>
+          <tr><td><b>E</b> · en H, sin atresia</td><td class="n">~4 %</td><td><span class="si">Sí</span></td><td><span class="si">Sí</span></td><td>Tos con las tomas, neumonías a repetición; diagnóstico tardío</td></tr>
+        </tbody></table></div>
+      <div class="checklist">
+        <h3>Conducta inicial, en orden</h3>
+        <ul>
+          <li>Nada por boca.</li>
+          <li>Sonda Replogle en aspiración continua.</li>
+          <li>Cabecera elevada 30–45°.</li>
+          <li>Hidratación IV y evitar ventilar con bolsa a presión.</li>
+          <li>Ecocardiograma y búsqueda de VACTERL (renal, columna, extremidades, ano).</li>
+          <li>Derivación a cirugía pediátrica.</li>
+        </ul>
+      </div>
+      <button class="btn" onclick="go(8)">Ver mi recorrido →</button>
+    </section>`),
+
+  () => {
+    const n=ORDER.filter(k=>S[k]===DEC[k].ok).length;
+    const items=ORDER.map(k=>{const ok=S[k]===DEC[k].ok;
+      return `<li><span class="mk ${ok?'ok':'no'}">${ok?'✓':'✗'}</span><span><b>${DEC[k].label}</b><br>${S[k]?DEC[k].opts[S[k]].t:'Sin responder'}</span></li>`;}).join('');
+    return $(`<section class="scene">
+      <div class="eyebrow">Tu recorrido</div>
+      <div class="row"><span class="score">${n}/5</span><span class="lead">decisiones acertadas</span></div>
+      <ul class="path">${items}</ul>
+      <p>${n===5?'Reconociste la clínica, estabilizaste, leíste las dos placas y pediste lo que faltaba.':'Volvé a la tabla: la clave está en la sonda y en el aire abdominal.'}</p>
+      <div class="row">
+        <button class="btn" onclick="ORDER.forEach(k=>S[k]=null);go(0)">Jugar de nuevo</button>
+        <button class="btn ghost" onclick="go(7)">Volver a la tabla</button>
+      </div>
+    </section>`);
+  }
+];
+
+go(0);
+</script>
+</body>
+</html>
